@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ألبوم ذكرياتنا الرومانسي</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Arabic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        },
+                        cream: '#FAF7F2',
+                        gold: '#D4AF37',
+                    },
+                    fontFamily: {
+                        amiri: ['Amiri', 'serif'],
+                        cairo: ['Cairo', 'sans-serif'],
+                        kufi: ['Reem Kufi', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1a0813 0%, #2c0b1e 50%, #15050f 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 3D Book Container Styling */
+        .book-container {
+            perspective: 2000px;
+        }
+
+        .book {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 580px;
+            transition: transform 0.5s ease;
+            transform-style: preserve-3d;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(225, 29, 72, 0.2);
+            border-radius: 16px;
+        }
+
+        .page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            top: 0;
+            background-color: #faf7f2;
+            background-image: radial-gradient(#e5e0d8 1px, transparent 1px);
+            background-size: 20px 20px;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.5rem;
+            overflow: hidden;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .page-left {
+            left: 0;
+            border-right: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px 0 0 12px;
+        }
+
+        .page-right {
+            right: 0;
+            border-left: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Book Spine Shadow */
+        .book-spine {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 30px;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.2) 0%, 
+                rgba(0,0,0,0.05) 40%, 
+                rgba(0,0,0,0.2) 50%, 
+                rgba(0,0,0,0.05) 60%, 
+                rgba(0,0,0,0.2) 100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* Polaroid Photo Frame Styling */
+        .polaroid {
+            background: white;
+            padding: 12px 12px 24px 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);
+            transform: rotate(-1.5deg);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(225, 29, 72, 0.25);
+        }
+
+        .polaroid-tape {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 26px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+        }
+
+        /* Floating Hearts Animation */
+        .heart-particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            animation: floatUp 4s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.3) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e11d48;
+            border-radius: 3px;
+        }
+
+        /* Responsive styles for mobile screens */
+        @media (max-width: 768px) {
+            .book {
+                height: auto;
+                min-height: 700px;
+                flex-direction: column;
+            }
+            .page {
+                position: relative;
+                width: 100% !important;
+                height: auto;
+                min-height: 350px;
+                border-radius: 12px !important;
+                padding: 1.5rem;
+            }
+            .book-spine {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-between p-4 md:p-8 min-h-screen">
+
+    <!-- Floating Background Hearts -->
+    <div id="hearts-container"></div>
+
+    <!-- Top Music & Controls Header -->
+    <header class="w-full max-w-4xl flex justify-between items-center mb-6 z-30 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="w-10 h-10 rounded-full bg-rose-600/30 flex items-center justify-center text-rose-400">
+                <i class="fa-solid fa-book-bookmark text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-white font-kufi">ألبوم ذكرياتنا الرومانسي</h1>
+                <p class="text-xs text-rose-200/70 font-cairo">احتفظ بأجمل لحظاتك مع من تحب</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Upload All Button -->
+            <button onclick="document.getElementById('multi-file-input').click()" class="bg-rose-600/80 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-lg hover:shadow-rose-500/30">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span class="hidden sm:inline">رفع الصور</span>
+            </button>
+            <input type="file" id="multi-file-input" accept="image/*" multiple class="hidden" onchange="handleMultipleUpload(event)">
+
+            <!-- Music Player Toggle -->
+            <button id="music-btn" onclick="toggleMusic()" class="bg-white/10 hover:bg-white/20 text-white p-2.5 rounded-xl transition flex items-center justify-center border border-white/10">
+                <i id="music-icon" class="fa-solid fa-music text-rose-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hidden Audio Element for Romantic Background Music -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112199.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Main Book Display -->
+    <main class="w-full max-w-5xl flex flex-col items-center justify-center my-auto z-10">
+        
+        <!-- Book Container -->
+        <div class="book-container w-full flex justify-center">
+            <div class="book flex flex-col md:flex-row relative">
+                
+                <!-- Book Center Spine (Desktop) -->
+                <div class="book-spine"></div>
+
+                <!-- LEFT PAGE: Text / Poetry -->
+                <div class="page page-left text-gray-800">
+                    <div class="flex justify-between items-center text-xs text-rose-700/60 font-semibold uppercase tracking-wider">
+                        <span id="page-date" class="font-cairo">ذكرياتنا الجميلة</span>
+                        <i class="fa-solid fa-feather-pointed text-rose-400"></i>
+                    </div>
+
+                    <div class="my-auto text-center px-2 md:px-6">
+                        <div class="inline-block mb-4 text-rose-500 text-2xl">
+                            <i class="fa-solid fa-quote-right"></i>
+                        </div>
+                        <p id="quote-text" class="text-lg md:text-2xl leading-relaxed text-gray-800 font-amiri italic font-semibold">
+                            "كالزهور النضرة، تزهو بك أيامي..."
+                        </p>
+                        <div class="w-12 h-0.5 bg-rose-300 mx-auto my-4 rounded-full"></div>
+                    </div>
+
+                    <div class="flex justify-between items-center text-xs text-gray-400">
+                        <span id="left-page-num" class="font-cairo">صفحة ١</span>
+                        <button onclick="editCurrentText()" class="text-rose-600 hover:text-rose-700 font-cairo flex items-center gap-1 transition">
+                            <i class="fa-solid fa-pen-to-square"></i> تعديل النص
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIGHT PAGE: Image Display -->
+                <div class="page page-right flex flex-col justify-between items-center">
+                    
+                    <div class="w-full flex justify-end">
+                        <span id="memory-tag" class="text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full border border-rose-100 font-cairo">
+                            Memory #01
+                        </span>
+                    </div>
+
+                    <!-- Photo Polaroid Box -->
+                    <div class="w-full flex justify-center my-auto">
+                        <div class="polaroid w-64 md:w-72" onclick="triggerSingleUpload()">
+                            <div class="polaroid-tape"></div>
+                            
+                            <!-- Image Frame Container -->
+                            <div class="relative w-full h-64 md:h-72 bg-gray-100 rounded overflow-hidden flex items-center justify-center group">
+                                <img id="album-image" src="" alt="Album Memory" class="w-full h-full object-cover transition duration-500 group-hover:scale-105 hidden">
+                                
+                                <!-- Placeholder Overlay when no image -->
+                                <div id="image-placeholder" class="flex flex-col items-center justify-center text-gray-400 p-6 text-center">
+                                    <div class="w-16 h-16 rounded-full bg-rose-50 text-rose-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                        <i class="fa-solid fa-camera-retro text-2xl"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-600 font-cairo">اضغط هنا لإضافة صورة</p>
+                                    <p class="text-xs text-gray-400 mt-1 font-cairo">أو اختر صورتك المفضلة</p>
+                                </div>
+
+                                <!-- Change Image Overlay on Hover -->
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col items-center justify-center text-white font-cairo text-sm gap-2">
+                                    <i class="fa-solid fa-arrow-up-from-bracket text-xl"></i>
+                                    <span>تغيير هذه الصورة</span>
+                                </div>
+                            </div>
+
+                            <!-- Polaroid Caption -->
+                            <div class="mt-3 text-center">
+                                <p id="photo-caption" class="text-sm font-amiri font-bold text-gray-700">لحظة لا تُنسى ❤️</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="file" id="single-file-input" accept="image/*" class="hidden" onchange="handleSingleUpload(event)">
+
+                    <!-- Footer Note & Page Number -->
+                    <div class="w-full flex justify-between items-center text-xs text-gray-400">
+                        <span class="font-cairo">انقر على الصورة لتغييرها</span>
+                        <span id="right-page-num" class="font-cairo">صفحة ٢</span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="flex items-center justify-center gap-6 mt-8 z-20">
+            <button onclick="prevPage()" class="w-12 h-12 rounded-full bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center transition border border-white/20 shadow-lg hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100" id="prev-btn">
+                <i class="fa-solid fa-chevron-right text-lg"></i>
+            </button>
+
+            <div class="text-white font-cairo text-sm bg-black/30 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+                <span id="current-page-indicator">1</span> / <span id="total-pages-indicator">4</span>
+            </div>
+
+            <button onclick="nextPage()" class="w-12 h-12 rounded-full bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center transition border border-white/20 shadow-lg hover:scale-110 active:scale-95 disabled:opacity-30 disabled:hover:scale-100" id="next-btn">
+                <i class="fa-solid fa-chevron-left text-lg"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-rose-200/50 text-xs font-cairo py-4 z-10">
+        صُنع بكل حب ❤️ ألبوم ذكريات خاص
+    </footer>
+
+    <!-- Text Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md text-gray-800 shadow-2xl font-cairo">
+            <h3 class="text-lg font-bold mb-4 text-rose-700 flex items-center gap-2">
+                <i class="fa-solid fa-heart"></i> تعديل رسالة الذكرى
+            </h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-500 font-semibold mb-1">العبارة الرومانسية:</label>
+                    <textarea id="edit-quote-input" rows="3" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none text-sm font-amiri text-lg"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 font-semibold mb-1">عنوان الصورة / التعليق:</label>
+                    <input type="text" id="edit-caption-input" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none text-sm">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeEditModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-xl text-sm font-semibold transition">إلغاء</button>
+                <button onclick="saveEditedText()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-semibold transition shadow-md">حفظ التغييرات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Default Pages Data Structure
+        let albumPages = [
+            {
+                quote: "كالزهور النضرة، تزهو بك أيامي... وفي قربك تبتسم الحياة.",
+                caption: "أولى لحظاتنا معا 🌸",
+                imageSrc: "",
+                date: "الذكرى الأولى"
+            },
+            {
+                quote: "أنتِ لستِ فقط حبيبتي، بل أنتِ أجمل أقداري وعالمي الخاص.",
+                caption: "ضحكتك المضيئة ✨",
+                imageSrc: "",
+                date: "أجمل الأوقات"
+            },
+            {
+                quote: "معك عرفتُ أن السعادة ليست مكاناً، بل شخصاً هو أنت.",
+                caption: "رحلة من العمر 💕",
+                imageSrc: "",
+                date: "لحظات دافئة"
+            },
+            {
+                quote: "دُمْت لي سَنَداً ونوراً يُضيء حياتي في كل يوم.",
+                caption: "معاً للأبد ♾️",
+                imageSrc: "",
+                date: "حكاية عشق"
+            }
+        ];
+
+        let currentIndex = 0;
+        let isMusicPlaying = false;
+
+        // Initialize App
+        window.onload = function() {
+            createFloatingHearts();
+            renderPage(currentIndex);
+        };
+
+        // Render Current Album Page
+        function renderPage(index) {
+            const pageData = albumPages[index];
+
+            // Update Left Page Content
+            document.getElementById('quote-text').innerText = pageData.quote;
+            document.getElementById('page-date').innerText = pageData.date;
+            document.getElementById('left-page-num').innerText = `صفحة ${(index * 2) + 1}`;
+
+            // Update Right Page Content
+            document.getElementById('photo-caption').innerText = pageData.caption;
+            document.getElementById('memory-tag').innerText = `Memory #${String(index + 1).padStart(2, '0')}`;
+            document.getElementById('right-page-num').innerText = `صفحة ${(index * 2) + 2}`;
+
+            // Update Image
+            const imgElement = document.getElementById('album-image');
+            const placeholder = document.getElementById('image-placeholder');
+
+            if (pageData.imageSrc) {
+                imgElement.src = pageData.imageSrc;
+                imgElement.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                imgElement.src = '';
+                imgElement.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+
+            // Update Nav Indicators
+            document.getElementById('current-page-indicator').innerText = index + 1;
+            document.getElementById('total-pages-indicator').innerText = albumPages.length;
+
+            // Enable/Disable Nav Buttons
+            document.getElementById('prev-btn').disabled = index === 0;
+            document.getElementById('next-btn').disabled = index === albumPages.length - 1;
+        }
+
+        // Navigation Functions
+        function nextPage() {
+            if (currentIndex < albumPages.length - 1) {
+                currentIndex++;
+                renderPage(currentIndex);
+            }
+        }
+
+        function prevPage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderPage(currentIndex);
+            }
+        }
+
+        // Upload Single Image for Current Page
+        function triggerSingleUpload() {
+            document.getElementById('single-file-input').click();
+        }
+
+        function handleSingleUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    albumPages[currentIndex].imageSrc = e.target.result;
+                    renderPage(currentIndex);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Upload Multiple Images All at Once
+        function handleMultipleUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            Array.from(files).forEach((file, idx) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (idx < albumPages.length) {
+                        albumPages[idx].imageSrc = e.target.result;
+                    } else {
+                        // Dynamically add extra pages if user uploads more images!
+                        albumPages.push({
+                            quote: "كل لحظة معك هي ذكري جديدة تُحفر في قلبي...",
+                            caption: "ذكرى جديدة ❤️",
+                            imageSrc: e.target.result,
+                            date: "لحظات رومانسية"
+                        });
+                    }
+                    renderPage(currentIndex);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Edit Text Modal Functions
+        function editCurrentText() {
+            const pageData = albumPages[currentIndex];
+            document.getElementById('edit-quote-input').value = pageData.quote;
+            document.getElementById('edit-caption-input').value = pageData.caption;
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        function saveEditedText() {
+            const newQuote = document.getElementById('edit-quote-input').value.trim();
+            const newCaption = document.getElementById('edit-caption-input').value.trim();
+
+            if (newQuote) albumPages[currentIndex].quote = newQuote;
+            if (newCaption) albumPages[currentIndex].caption = newCaption;
+
+            renderPage(currentIndex);
+            closeEditModal();
+        }
+
+        // Toggle Music Player
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const icon = document.getElementById('music-icon');
+
+            if (isMusicPlaying) {
+                music.pause();
+                icon.className = 'fa-solid fa-music text-rose-300';
+            } else {
+                music.play().catch(() => {});
+                icon.className = 'fa-solid fa-volume-high text-rose-400 animate-pulse';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // Generate Romantic Floating Hearts in Background
+        function createFloatingHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartIcons = ['❤️', '💖', '💕', '🌹', '✨'];
+
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-particle text-rose-400/30';
+                heart.innerText = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                heart.style.left = `${Math.random() * 100}vw`;
+                heart.style.animationDuration = `${3 + Math.random() * 5}s`;
+                heart.style.animationDelay = `${Math.random() * 5}s`;
+                heart.style.fontSize = `${14 + Math.random() * 20}px`;
+                container.appendChild(heart);
+            }
+        }
+    </script>
+</body>
+</html>
